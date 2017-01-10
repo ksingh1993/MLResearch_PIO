@@ -1,6 +1,7 @@
-import dataParsing
 import json
 import urllib.request, urllib.parse
+
+dataParsing = __import__("Data Parsing script")
 
 '''
 Reads from the file 'filename', sends first half of data to pio data preparator to train engine.
@@ -11,7 +12,7 @@ filename - a .csv file in the same directory
 Output:
 <no return value>
 '''
-def sendTrainingData(filename):
+def sendTrainingData(filename, accessKey="UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb5eyVTBNsKEq3R_j2rwPiEf0Dbh"):
 	allData = dataParsing.cleanParseData(filename)
 	trainingData = allData[0:(len(allData))/2]
 	#to extract later for testing the algo
@@ -60,7 +61,7 @@ def sendTrainingData(filename):
 				"plan" : tier
 			}
 		}
-		url = 'http://127.0.0.1:7070/events.json?accessKey=UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb5eyVTBNsKEq3R_j2rwPiEf0Dbh'
+		url = 'http://127.0.0.1:7070/events.json?accessKey=%s' % accessKey
 		encodedData = json.dumps(data).encode('utf-8')
 		header = {"Content-Type" : "application/json"}
 		req = urllib.request.Request(url, encodedData, header)
