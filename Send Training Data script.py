@@ -19,10 +19,15 @@ def sendTrainingData(filename, accessKey="UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb
 	currentId = 0
 	for row in trainingData:
 		eId = "u"+ str(currentId)
-		totalGrade= row[30] + row[31] + row[32]
-		tier = 0
-		if totalGrade >= 30:
-			tier = 1
+		midterm1 = 0
+		midterm2 = 0
+		final = 0
+		if row[32] >= 10:
+			final = 1
+		if row[31] >= 10:
+			midterm2 = 1
+		if row[30] >= 10:
+			midterm1 = 1
 		data = {
 			"event" : "$set",
 			"entityType" : "user",
@@ -58,10 +63,12 @@ def sendTrainingData(filename, accessKey="UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb
 				"attr27" : row[27],
 				"attr28" : row[28],
 				"attr29" : row[29],
-				"plan" : tier
+				"attr30" : midterm1,
+				"attr31" : midterm2,
+				"plan" : final
 			}
 		}
-		url = 'http://127.0.0.1:7070/events.json?accessKey=%s' % accessKey
+		url = 'http://pacora:7070/events.json?accessKey=%s' % accessKey
 		encodedData = json.dumps(data).encode('utf-8')
 		header = {"Content-Type" : "application/json"}
 		req = urllib.request.Request(url, encodedData, header)
@@ -86,11 +93,16 @@ def testAccuracy(filename):
 	hit = 0
 	miss = 0
 	for row in testingData:
-		totalGrade= row[30] + row[31] + row[32]
-		tier = 0
-		if totalGrade >= 30:
-			tier = 1
-		expectedOutput = float(tier)
+		midterm1 = 0
+		midterm2 = 0
+		final = 0
+		if row[32] >= 10:
+			final = 1
+		if row[31] >= 10:
+			midterm2 = 1
+		if row[30] >= 10:
+			midterm1 = 1
+		expectedOutput = float(final)
 		data = {
 			"attr0" : row[0],
 			"attr1" : row[1],
@@ -121,9 +133,11 @@ def testAccuracy(filename):
 			"attr26" : row[26],
 			"attr27" : row[27],
 			"attr28" : row[28],
-			"attr29" : row[29]
+			"attr29" : row[29],
+			"attr30" : midterm1,
+			"attr31" : midterm2
 		}
-		url = 'http://127.0.0.1:8000/queries.json'
+		url = 'http://pacora:8000/queries.json'
 		encodedData = json.dumps(data).encode('utf-8')
 		header = {"Content-Type" : "application/json"}
 		req = urllib.request.Request(url, encodedData, header)
