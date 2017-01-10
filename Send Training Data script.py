@@ -14,7 +14,7 @@ Output:
 '''
 def sendTrainingData(filename, accessKey="UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb5eyVTBNsKEq3R_j2rwPiEf0Dbh"):
 	allData = dataParsing.cleanParseData(filename)
-	trainingData = allData[0:(len(allData))/2]
+	trainingData = allData[0:int(len(allData)/2)]
 	#to extract later for testing the algo
 	currentId = 0
 	for row in trainingData:
@@ -61,7 +61,7 @@ def sendTrainingData(filename, accessKey="UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb
 				"plan" : tier
 			}
 		}
-		url = 'http://127.0.0.1:7070/events.json?accessKey=%s' % accessKey
+		url = 'http://pacora:7070/events.json?accessKey=%s' % accessKey
 		encodedData = json.dumps(data).encode('utf-8')
 		header = {"Content-Type" : "application/json"}
 		req = urllib.request.Request(url, encodedData, header)
@@ -82,7 +82,7 @@ Output:
 '''
 def testAccuracy(filename):
 	allData = dataParsing.cleanParseData(filename)
-	testingData = allData[(len(allData))/2:len(allData)]
+	testingData = allData[int(len(allData)/2):len(allData)]
 	hit = 0
 	miss = 0
 	for row in testingData:
@@ -123,7 +123,7 @@ def testAccuracy(filename):
 			"attr28" : row[28],
 			"attr29" : row[29]
 		}
-		url = 'http://127.0.0.1:8000/queries.json'
+		url = 'http://pacora:8000/queries.json'
 		encodedData = json.dumps(data).encode('utf-8')
 		header = {"Content-Type" : "application/json"}
 		req = urllib.request.Request(url, encodedData, header)
@@ -138,3 +138,5 @@ def testAccuracy(filename):
 			miss += 1
 	print("hit: " + str(hit))
 	print("miss: " + str(miss))
+
+testAccuracy('student-mat.csv')
