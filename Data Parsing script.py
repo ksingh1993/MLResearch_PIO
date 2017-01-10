@@ -24,11 +24,22 @@ is imported from CSV.
 '''
 def cleanParseData(filename):
 	rawData = parseMyCsv(filename)
-	for i in range(len(rawData)):
+	for i in range(1, len(rawData)):
 		row = rawData[i]
 		for j in range(len(row)):
-			currentItem = row[j]
-			rawData[i][j] = currentItem.replace('"', '')
+			currentItem = row[j].replace('"', '')
+			numericVal = 0
+			if currentItem in general.keys():
+				numericVal = general[currentItem]
+			elif 'job' in rawData[0][j]:
+				numericVal = job[currentItem]
+			elif 'reason' in rawData[0][j]:
+				numericVal = reason[currentItem]
+			elif 'guardian' in rawData[0][j]:
+				numericVal = guardian[currentItem]
+			else:
+				numericVal = float(currentItem)
+			rawData[i][j] = numericVal
 	return rawData
 
 '''
@@ -43,14 +54,43 @@ Output:
 '''
 def prettyPrint(rowList):
 	for row in rowList:
-		print row
+		print(row)
 
 '''
+Following are four dictionaries to map attribute values that are strings into corresponding numbers
 '''
-attrToNumberMap = {
-	'school': {'GP': 0, 'MS': 1},
-	'sex': {'M': 0, 'F': 1},
-	'address': {'U': 0, 'R': 1},
-	'famsize': {'LE3': 0, 'GT3': 1},
-	'Pstatus': {'T': 0, 'A': 1}	
+general = {
+	'GP' : 0,
+	'MS' : 1,
+	'F' : 0,
+	'M' : 1,
+	'U' : 0,
+	'R' : 1,
+	'LE3' : 0,
+	'GT3' : 1,
+	'T' : 0,
+	'A' : 1,
+	'yes' : 1,
+	'no' : 0
+}
+
+job = {
+	'teacher' : 0,
+	'health' : 1,
+	'services' : 2,
+	'at_home' : 3,
+	'other' : 4
+}
+
+reason = {
+	'home' : 0,
+	'reputation' : 1,
+	'course' : 2,
+	'other' : 3
+}
+
+guardian = {
+	'mother' : 0,
+	'father' : 1,
+	'other' : 2,
 }
