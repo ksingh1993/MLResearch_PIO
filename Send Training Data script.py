@@ -74,7 +74,7 @@ def sendTrainingData(filename):
 Tests the accuracy of the Prediction engine.
 
 Input: 
-filename - a .csv file in the same directory 
+filename - a .csv file in the same directory.
 
 Output:
 <no return value>
