@@ -14,7 +14,7 @@ Output:
 '''
 def sendTrainingData(filename, accessKey="UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb5eyVTBNsKEq3R_j2rwPiEf0Dbh"):
 	allData = dataParsing.cleanParseData(filename)
-	trainingData = allData[0:int(len(allData)/2)]
+	trainingData = allData[1:int(len(allData)/2)]
 	#to extract later for testing the algo
 	currentId = 0
 	for row in trainingData:
@@ -22,9 +22,9 @@ def sendTrainingData(filename, accessKey="UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb
 		midterm1 = 0
 		midterm2 = 0
 		final = 0
-		if row[32] >= 10:
+		if int(row[32]) >= 10:
 			final = 1
-		if row[31] >= 10:
+		if int(row[31]) >= 10:
 			midterm2 = 1
 		if row[30] >= 10:
 			midterm1 = 1
@@ -76,7 +76,6 @@ def sendTrainingData(filename, accessKey="UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb
 		print(f.read())
 		currentId += 1
 	print(currentId)
-
 
 '''
 Tests the accuracy of the Prediction engine.
@@ -154,3 +153,4 @@ def testAccuracy(filename):
 	print("miss: " + str(miss))
 
 testAccuracy('student-mat.csv')
+#sendTrainingData('student-mat.csv')

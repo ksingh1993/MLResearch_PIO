@@ -94,3 +94,5 @@ guardian = {
 	'father' : 1,
 	'other' : 2,
 }
+
+prettyPrint(cleanParseData('student-mat.csv'))
