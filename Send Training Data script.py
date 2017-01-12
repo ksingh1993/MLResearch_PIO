@@ -1,5 +1,6 @@
 import json
 import urllib.request, urllib.parse
+#import predictionio
 
 dataParsing = __import__("Data Parsing script")
 
@@ -14,7 +15,7 @@ Output:
 '''
 def sendTrainingData(filename, accessKey="UrWAZaTlA1Nflr-wAzo8sUC-Fgg2AscnYhBtmb5eyVTBNsKEq3R_j2rwPiEf0Dbh"):
 	allData = dataParsing.cleanParseData(filename)
-	trainingData = allData[1:int(len(allData)/2)]
+	trainingData = allData[1:int(len(allData)/2)] #exclude header row
 	#to extract later for testing the algo
 	currentId = 0
 	for row in trainingData:
@@ -152,5 +153,56 @@ def testAccuracy(filename):
 	print("hit: " + str(hit))
 	print("miss: " + str(miss))
 
-testAccuracy('student-mat.csv')
-#sendTrainingData('student-mat.csv')
+def sendTrainingData_LinReg(filename, accessKey="hEZk3CwiUZZHBKWm4-gUv8Vv4cerFn8FkxRpittj59rLwMKexjplalTEfPrnSn3k"):
+	allData = dataParsing.parseTxt(filename)
+	trainingData = allData[0:int(len(allData)/2)] #no header row
+	currentId = 0
+	for row in trainingData:
+		eId = "u"+ str(currentId)
+		data = {
+			"event" : "$set",
+			"entityType" : "training_point",
+			"entityId" : eId,
+			"properties" : {
+				"attr0" : row[1],
+				"attr1" : row[2],
+				"attr2" : row[3],
+				"attr3" : row[4],
+				"attr4" : row[5],
+				"attr5" : row[6],
+				"attr6" : row[7],
+				"attr7" : row[8],
+				"plan" : row[0]
+			}
+		}
+		url = 'http://pacora:7070/events.json?accessKey=%s' % accessKey
+		encodedData = json.dumps(data).encode('utf-8')
+		header = {"Content-Type" : "application/json"}
+		req = urllib.request.Request(url, encodedData, header)
+		f = urllib.request.urlopen(req)
+		print(f.read())
+		currentId += 1
+
+def test_LinReg(filename, accessKey="hEZk3CwiUZZHBKWm4-gUv8Vv4cerFn8FkxRpittj59rLwMKexjplalTEfPrnSn3k"):
+	allData = dataParsing.parseTxt(filename)
+	trainingData = allData[0:int(len(allData)/2)]
+	testingData = allData[int(len(allData)/2):len(allData)]
+	for row in trainingData:
+		plan = row[0]
+		expectedOutput = float(plan)
+		data = {
+			"features" : [row[1], row[2], row[3], row[4], row[5],row[6], row[7], row[8]]
+			}
+		url = 'http://pacora:8000/queries.json'
+		encodedData = json.dumps(data).encode('utf-8')
+		header = {"Content-Type" : "application/json"}
+		req = urllib.request.Request(url, encodedData, header)
+		f = urllib.request.urlopen(req)
+		fetchedData = f.read()
+		jsResult = json.loads(fetchedData.decode('utf-8'))
+		actualResult = jsResult['prediction']
+		print("actual result: %f, expected result: %f, abs. difference: %f, perc. difference: %f%%" % (actualResult, expectedOutput, actualResult - expectedOutput, (actualResult - expectedOutput)*100/expectedOutput))
+
+test_LinReg('linReg_data.txt')
+#engine_client = predictionio.EngineClient(url="http://pacora:8000")
+#print(engine_client.send_query({"features" :[-1, -2, -1, -3, 0, 0, -1, 0]}))

@@ -9,7 +9,7 @@ filename - a .csv filename in the same directory
 Output:
 result - a list of lists, where the inner list elements are the corresponding rows in the csv file
 '''
-def parseMyCsv(filename):
+def parseCsv(filename):
 	#returns a list of list of strings
 	result = []
 	with open(filename) as csvFile:
@@ -23,7 +23,7 @@ Builds on top of parseMyCsv by cleaning out the double quotes present inside som
 is imported from CSV.
 '''
 def cleanParseData(filename):
-	rawData = parseMyCsv(filename)
+	rawData = parseCsv(filename)
 	for i in range(1, len(rawData)):
 		row = rawData[i]
 		for j in range(len(row)):
@@ -55,6 +55,29 @@ Output:
 def prettyPrint(rowList):
 	for row in rowList:
 		print(row)
+
+def parseTxt(filename):
+	result = []
+	with open(filename) as txtFile:
+		currentRow = []
+		for line in txtFile:
+			itr = 0
+			currentItem = ''
+			while itr < len(line):
+				if line[itr] == ' ' or line[itr] == ',':
+					currentRow += [float(currentItem)]
+					currentItem = ''
+				else:
+					currentItem += line[itr]
+				itr += 1
+			currentRow += [float(currentItem[0:len(currentItem)-1])]
+			result += [currentRow]
+			currentRow = []
+	return result
+
+
+
+parseTxt('linReg_data.txt')
 
 '''
 Following are four dictionaries to map attribute values that are strings into corresponding numbers
@@ -94,5 +117,3 @@ guardian = {
 	'father' : 1,
 	'other' : 2,
 }
-
-prettyPrint(cleanParseData('student-mat.csv'))
