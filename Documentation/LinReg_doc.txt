@@ -1,0 +1,55 @@
+PredictionIO-MLLib-LinReg-Template
+
+Underlying context:
+
+This engine uses Linear Regression (Multivariate) with a Stochastic Gradient Descent (SGD) strategy. Basically, all the attributes are independent variables and the label/prediction is the dependent variable. The stuff that technique tries to predict, basically, is the coefficients b_j of the following equation:
+y = b_0 + b_1*x_1 + b_2*x_2 + ....
+With the SGD technique, you start out with a an initial value for all b_j's then you iterate on them by reducing the error function at each step. When the error function becomes sufficiently small, you have a model (b_j values) and you can 'predict' the value of y (label/ depenedent variable), given values of x (attributes/ independent variables).
+For more, please refer to:
+http://machinelearningmastery.com/implement-linear-regression-stochastic-gradient-descent-scratch-python/
+file:///C:/Users/kanak.singh/Downloads/TMI04.2_linear_regression.pdf (download-able link)
+http://stackoverflow.com/questions/26804656/why-do-we-use-gradient-descent-in-linear-regression
+
+Conclusion: SGD is useful for big data sets and multivariate linear regression (from the stack-overflow answer above). Otherwise, we can just use statistical model for the regression.
+
+Setting up engine:
+
+Ran into issues while performing pio build. Basically, the dependencies in the build.sbt file had a mistake. It listed "io.prediction..." as a dependency but it should have been "org.apache.predictionio..." Perhaps it was outdated.
+Additionally, had to update the .scala files with the correct import statements. Same as above, "io.prediction..." had to be replaced with "org.apache.predictionio..."
+
+After pio was built, and sample data was reformatted and parsed im a desired way, sending the training data was set up, which was different than previous engine as expected.
+
+
+Querying from engine:
+
+When the sample test data (linReg_data.txt - 67 data points total) provided by PredictionIO was used to train + query prediction from engine, following statements were logged:
+[WARN] [BLAS] Failed to load implementation from: com.github.fommil.netlib.NativeSystemBLAS
+[WARN] [BLAS] Failed to load implementation from: com.github.fommil.netlib.NativeRefBLAS
+
+The results that were obtained are as follows:
+actual result: 2.857158, expected result: 2.568788, abs. difference: 0.288370, perc. difference: 11.225919%
+actual result: 1.662338, expected result: 2.656757, abs. difference: -0.994419, perc. difference: -37.429804%
+actual result: 2.473594, expected result: 2.677591, abs. difference: -0.203997, perc. difference: -7.618674%
+actual result: 2.685039, expected result: 2.718001, abs. difference: -0.032961, perc. difference: -1.212704%
+actual result: 2.004240, expected result: 2.794228, abs. difference: -0.789988, perc. difference: -28.272130%
+actual result: 1.926123, expected result: 2.806386, abs. difference: -0.880264, perc. difference: -31.366445%
+.
+.
+.
+.
+actual result: 1.432099, expected result: 3.993603, abs. difference: -2.561504, perc. difference: -64.140176%
+actual result: 2.172570, expected result: 4.029806, abs. difference: -1.857236, perc. difference: -46.087484%
+actual result: 2.214443, expected result: 4.129551, abs. difference: -1.915107, perc. difference: -46.375682%
+actual result: 1.573561, expected result: 4.385147, abs. difference: -2.811586, perc. difference: -64.116114%
+actual result: 2.376960, expected result: 4.684443, abs. difference: -2.307483, perc. difference: -49.258424%
+actual result: 2.218596, expected result: 5.477509, abs. difference: -3.258913, perc. difference: -59.496252%
+
+
+When I use 'CASP.csv', something obtained from UCI machine learning repository and with 45000 datapoints total, I get an aggregate error of -2916.
+
+Notes:
+
+The raw data was not training the engine correctly for some reason. Specifically, when you queried from the engine it returns 'nan' as a prediction value.
+So I normalized the data by dividing each attribute by the max value of that attribute, that did the trick.
+
+Going to check statistical regression and see the comparison
